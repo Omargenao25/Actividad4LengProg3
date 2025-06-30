@@ -1,14 +1,22 @@
 ﻿using Actividad3LengProg3.Models;
+using Actividad4LengProg3.Data;
+using Actividad4LengProg3.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Actividad3LengProg3.Controllers
 {
     public class EstudiantesController : Controller
     {
-        private static List<EstudianteViewModel> estudiantes = new List<EstudianteViewModel>();
+        private readonly EstudiantesDbContext _context;
 
-       // Lista de carreras, turnos, tipos de ingreso, etc.
+        public EstudiantesController(EstudiantesDbContext context)
+        {
+            _context = context;
+        }
+
+        // Lista de carreras, turnos, tipos de ingreso, etc.
         private List<string> carreras = new List<string> { "Ingeniería", "Administración", "Sistemas", "Contabilidad" };
         private List<string> generos = new List<string> { "Masculino", "Femenino", "Otro" };
         private List<string> turnos = new List<string> { "Mañana", "Tarde", "Noche" };
@@ -23,42 +31,38 @@ namespace Actividad3LengProg3.Controllers
             return View();
         }
 
-        public ActionResult Registrar(EstudianteViewModel estudiante)
+        [HttpPost]
+        public async Task<IActionResult> Registrar(EstudianteViewModel estudiante)
         {
-            if (ModelState.IsValid)
+            if (_context.Estudiantes.Any(e => e.Matricula == estudiante.Matricula))
             {
-                // Verificar que la matrícula no exista
-                if (estudiantes.Any(e => e.Matricula == estudiante.Matricula))
-                {
-                    ModelState.AddModelError("Matricula", "La matrícula ya existe.");
-                }
-                else
-                {
-                    estudiantes.Add(estudiante);
-                    return RedirectToAction("Lista");
-                }
-                if (ModelState.IsValid)
-                {
-                    estudiantes.Add(estudiante);
-                    TempData["Mensaje"] = "Estudiante registrado exitosamente";
-                    return RedirectToAction("Lista");
-                }
+                ModelState.AddModelError("Matricula", "La matrícula ya existe.");
             }
-            // Si hay errores, volver a la vista y cargar listas
-            ViewBag.Carreras = carreras;
-            ViewBag.Generos = generos;
-            ViewBag.Turnos = turnos;
-            ViewBag.TiposIngreso = tiposIngreso;
-            return View("Index", estudiante);
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Carreras = carreras;
+                ViewBag.Generos = generos;
+                ViewBag.Turnos = turnos;
+                ViewBag.TiposIngreso = tiposIngreso;
+                return View("Index", estudiante);
+            }
+
+            _context.Estudiantes.Add(estudiante);
+            await _context.SaveChangesAsync();
+            TempData["Mensaje"] = "Estudiante registrado exitosamente.";
+            return RedirectToAction("Lista");
         }
 
-        public ActionResult Lista()
+        public async Task<IActionResult> Lista()
         {
+            var estudiantes = await _context.Estudiantes.ToListAsync();
             return View(estudiantes);
-
         }
+
         [HttpGet]
-        public ActionResult Editar(string matricula)
+        [HttpGet]
+        public async Task<IActionResult> Editar(string matricula)
         {
             if (string.IsNullOrEmpty(matricula))
             {
@@ -66,7 +70,7 @@ namespace Actividad3LengProg3.Controllers
                 return RedirectToAction("Lista");
             }
 
-            var estudiante = estudiantes.FirstOrDefault(e => e.Matricula == matricula);
+            var estudiante = await _context.Estudiantes.FindAsync(matricula);
             if (estudiante == null)
             {
                 TempData["Error"] = "Estudiante no encontrado.";
@@ -81,10 +85,11 @@ namespace Actividad3LengProg3.Controllers
             return View("Index", estudiante);
         }
 
+
         [HttpPost]
-        public ActionResult Editar(EstudianteViewModel estudiante)
+        public async Task<IActionResult> Editar(EstudianteViewModel estudiante)
         {
-            var estudianteExistente = estudiantes.FirstOrDefault(e => e.Matricula == estudiante.Matricula);
+            var estudianteExistente = await _context.Estudiantes.FindAsync(estudiante.Matricula);
             if (estudianteExistente == null)
             {
                 TempData["Error"] = "No se encontró el estudiante a editar.";
@@ -93,7 +98,7 @@ namespace Actividad3LengProg3.Controllers
 
             if (estudiante.EstaBecado && (!estudiante.PorcentajeBeca.HasValue || estudiante.PorcentajeBeca <= 0))
             {
-                ModelState.AddModelError("PorcentajeBeca", "Debe especificar un porcentaje de beca válido.");
+                ModelState.AddModelError("PorcentajeBeca", "Debe especificar un porcentaje válido.");
             }
 
             if (!ModelState.IsValid)
@@ -102,7 +107,6 @@ namespace Actividad3LengProg3.Controllers
                 ViewBag.Generos = generos;
                 ViewBag.Turnos = turnos;
                 ViewBag.TiposIngreso = tiposIngreso;
-
                 return View("Index", estudiante);
             }
 
@@ -118,18 +122,21 @@ namespace Actividad3LengProg3.Controllers
             estudianteExistente.PorcentajeBeca = estudiante.PorcentajeBeca;
             estudianteExistente.AceptaTerminos = estudiante.AceptaTerminos;
 
+            _context.Update(estudianteExistente);
+            await _context.SaveChangesAsync();
             TempData["Mensaje"] = "Estudiante actualizado exitosamente.";
             return RedirectToAction("Lista");
         }
 
 
-
-        public ActionResult Eliminar(string matricula)
+        public async Task<IActionResult> Eliminar(string matricula)
         {
-            var estudiante = estudiantes.FirstOrDefault(e => e.Matricula == matricula);
+            var estudiante = await _context.Estudiantes.FindAsync(matricula);
+
             if (estudiante != null)
             {
-                estudiantes.Remove(estudiante);
+                _context.Estudiantes.Remove(estudiante);
+                await _context.SaveChangesAsync();
                 TempData["Mensaje"] = "Estudiante eliminado correctamente.";
             }
             else
@@ -139,7 +146,6 @@ namespace Actividad3LengProg3.Controllers
 
             return RedirectToAction("Lista");
         }
-
     }
-    }
+}
 
