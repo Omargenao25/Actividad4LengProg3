@@ -1,6 +1,8 @@
 ﻿using Actividad4LengProg3.Data;
+using Actividad4LengProg3.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Actividad4LengProg3.Controllers
 {
@@ -14,78 +16,72 @@ namespace Actividad4LengProg3.Controllers
             _context = context;
         }
 
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            return View(await _context.Materias.ToListAsync());
         }
 
-        // GET: MateriasController/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> Details(string id)
         {
-            return View();
+            if (id == null) return NotFound();
+
+            var materia = await _context.Materias.FirstOrDefaultAsync(m => m.Codigo == id);
+            if (materia == null) return NotFound();
+
+            return View(materia);
         }
 
-        // GET: MateriasController/Create
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: MateriasController/Create
+        public async Task<IActionResult> Registrar(MateriaViewModel materia)
+        {
+            if (!ModelState.IsValid) return View(materia);
+
+            _context.Materias.Add(materia);
+            await _context.SaveChangesAsync();
+            TempData["Mensaje"] = "Materia registrada exitosamente.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (id == null) return NotFound();
+
+            var materia = await _context.Materias.FindAsync(id);
+            if (materia == null) return NotFound();
+
+            return View(materia);
+        }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Editar(string id, MateriaViewModel materia)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            if (id != materia.Codigo) return NotFound();
+
+            if (!ModelState.IsValid) return View(materia);
+
+            _context.Update(materia);
+            await _context.SaveChangesAsync();
+            TempData["Mensaje"] = "Materia actualizada correctamente.";
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: MateriasController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Delete(string id)
         {
-            return View();
-        }
+            if (id == null) return NotFound();
 
-        // POST: MateriasController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            var materia = await _context.Materias.FindAsync(id);
+            if (materia == null) return NotFound();
 
-        // GET: MateriasController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: MateriasController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _context.Materias.Remove(materia);
+            await _context.SaveChangesAsync();
+            TempData["Mensaje"] = "Materia eliminada.";
+            return RedirectToAction(nameof(Index));
         }
     }
 }
