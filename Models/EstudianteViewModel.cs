@@ -1,11 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Actividad4LengProg3.Models;
 
 namespace Actividad4LengProg3.Models
 {
     public class EstudianteViewModel
     {
-        internal object matricula_estudiante;
+        internal object? matricula_estudiante;
 
         [Required(ErrorMessage = "El nombre completo es requerido")]
         [StringLength(100, ErrorMessage = "El nombre no puede exceder 100 caracteres")]

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Actividad4LengProg3.Models;
 
 namespace Actividad4LengProg3.Models
 {

@@ -1,5 +1,10 @@
+using Actividad4LengProg3.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<EstudiantesDbContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("ConexionDB")));
 
 
 // Add services to the container.
