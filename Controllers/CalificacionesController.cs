@@ -1,6 +1,9 @@
 ﻿using Actividad4LengProg3.Data;
+using Actividad4LengProg3.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Actividad4LengProg3.Controllers
 {
@@ -14,9 +17,12 @@ namespace Actividad4LengProg3.Controllers
             _context = context;
         }
 
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var calificaciones = _context.Calificaciones
+                .Include(c => c.Estudiante)
+                .Include(c => c.Materia);
+            return View(await calificaciones.ToListAsync());
         }
 
         // GET: CalificacionesController/Details/5
@@ -25,67 +31,67 @@ namespace Actividad4LengProg3.Controllers
             return View();
         }
 
-        // GET: CalificacionesController/Create
-        public ActionResult Create()
+        public IActionResult Create()
         {
+            ViewBag.Estudiantes = new SelectList(_context.Estudiantes, "Matricula", "NombreCompleto");
+            ViewBag.Materias = new SelectList(_context.Materias, "Codigo", "Nombre");
             return View();
         }
 
-        // POST: CalificacionesController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create(CalificacionViewModel calificacion)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                ViewBag.Estudiantes = new SelectList(_context.Estudiantes, "Matricula", "NombreCompleto", calificacion.MatriculaEstudiante);
+                ViewBag.Materias = new SelectList(_context.Materias, "Codigo", "Nombre", calificacion.CodigoMateria);
+                return View(calificacion);
             }
-            catch
-            {
-                return View();
-            }
+
+            _context.Calificaciones.Add(calificacion);
+            await _context.SaveChangesAsync();
+            TempData["Mensaje"] = "Calificación registrada correctamente.";
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: CalificacionesController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpGet]   
+        public async Task<IActionResult> Edit(int id)
         {
-            return View();
+            var calificacion = await _context.Calificaciones.FindAsync(id);
+            if (calificacion == null) return NotFound();
+
+            ViewBag.Estudiantes = new SelectList(_context.Estudiantes, "Matricula", "NombreCompleto", calificacion.MatriculaEstudiante);
+            ViewBag.Materias = new SelectList(_context.Materias, "Codigo", "Nombre", calificacion.CodigoMateria);
+            return View(calificacion);
         }
 
-        // POST: CalificacionesController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Editar(int id, CalificacionViewModel calificacion)
         {
-            try
+            if (id != calificacion.Id) return NotFound();
+
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                ViewBag.Estudiantes = new SelectList(_context.Estudiantes, "Matricula", "NombreCompleto", calificacion.MatriculaEstudiante);
+                ViewBag.Materias = new SelectList(_context.Materias, "Codigo", "Nombre", calificacion.CodigoMateria);
+                return View(calificacion);
             }
-            catch
-            {
-                return View();
-            }
+
+            _context.Update(calificacion);
+            await _context.SaveChangesAsync();
+            TempData["Mensaje"] = "Calificación actualizada correctamente.";
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: CalificacionesController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Eliminar(int id)
         {
-            return View();
-        }
+            var calificacion = await _context.Calificaciones.FindAsync(id);
+            if (calificacion == null) return NotFound();
 
-        // POST: CalificacionesController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _context.Calificaciones.Remove(calificacion);
+            await _context.SaveChangesAsync();
+            TempData["Mensaje"] = "Calificación eliminada.";
+            return RedirectToAction(nameof(Index));
         }
     }
 }

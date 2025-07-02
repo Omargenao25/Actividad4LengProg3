@@ -71,7 +71,7 @@ namespace Actividad4LengProg3.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Eliminar(string id)
         {
             if (id == null) return NotFound();
 
