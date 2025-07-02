@@ -48,7 +48,7 @@ namespace Actividad4LengProg3.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Editar(string id)
         {
             if (id == null) return NotFound();
 

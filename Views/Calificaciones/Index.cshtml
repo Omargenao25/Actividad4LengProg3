@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Actividad4LengProg3.Models.CalificacionViewModel>
+@{
+    ViewBag.Title = "Listado de Calificaciones";
+}
+
+<h3>@ViewBag.Title</h3>
+<p><a asp-action="Create" class="btn btn-primary">Registrar Calificación</a></p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Estudiante</th>
+            <th>Materia</th>
+            <th>Nota</th>
+            <th>Periodo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Estudiante?.NombreCompleto</td>
+                <td>@item.Materia?.Nombre</td>
+                <td>@item.Nota</td>
+                <td>@item.Periodo</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

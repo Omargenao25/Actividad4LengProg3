@@ -39,7 +39,7 @@ namespace Actividad4LengProg3.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CalificacionViewModel calificacion)
+        public async Task<IActionResult> Registrar(CalificacionViewModel calificacion)
         {
             if (!ModelState.IsValid)
             {
@@ -55,7 +55,7 @@ namespace Actividad4LengProg3.Controllers
         }
 
         [HttpGet]   
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Editar(int id)
         {
             var calificacion = await _context.Calificaciones.FindAsync(id);
             if (calificacion == null) return NotFound();
