@@ -16,7 +16,7 @@ namespace Actividad4LengProg3.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Lista()
         {
             return View(await _context.Materias.ToListAsync());
         }
@@ -31,10 +31,6 @@ namespace Actividad4LengProg3.Controllers
             return View(materia);
         }
 
-        public ActionResult Create()
-        {
-            return View();
-        }
 
         // POST: MateriasController/Create
         public async Task<IActionResult> Registrar(MateriaViewModel materia)
@@ -44,7 +40,7 @@ namespace Actividad4LengProg3.Controllers
             _context.Materias.Add(materia);
             await _context.SaveChangesAsync();
             TempData["Mensaje"] = "Materia registrada exitosamente.";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Lista));
         }
 
         [HttpGet]
@@ -68,9 +64,10 @@ namespace Actividad4LengProg3.Controllers
             _context.Update(materia);
             await _context.SaveChangesAsync();
             TempData["Mensaje"] = "Materia actualizada correctamente.";
-            return RedirectToAction(nameof(Index));
-        }
+            return RedirectToAction(nameof(Lista));
 
+        }
+        [HttpGet]
         public async Task<IActionResult> Eliminar(string id)
         {
             if (id == null) return NotFound();
@@ -78,10 +75,24 @@ namespace Actividad4LengProg3.Controllers
             var materia = await _context.Materias.FindAsync(id);
             if (materia == null) return NotFound();
 
+            return View(materia); 
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarConfirmado(string codigo)
+        {
+            var materia = await _context.Materias.FindAsync(codigo);
+            if (materia == null) return NotFound();
+
             _context.Materias.Remove(materia);
             await _context.SaveChangesAsync();
-            TempData["Mensaje"] = "Materia eliminada.";
-            return RedirectToAction(nameof(Index));
+            TempData["Mensaje"] = "Materia eliminada correctamente.";
+            return RedirectToAction(nameof(Lista));
         }
+
+
+
     }
 }
