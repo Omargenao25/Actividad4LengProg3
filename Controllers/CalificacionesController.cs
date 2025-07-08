@@ -17,7 +17,7 @@ namespace Actividad4LengProg3.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Lista()
         {
             var calificaciones = _context.Calificaciones
                 .Include(c => c.Estudiante)
@@ -31,11 +31,13 @@ namespace Actividad4LengProg3.Controllers
             return View();
         }
 
-        public IActionResult Create()
+        [HttpGet]
+        public IActionResult Registrar()
         {
             ViewBag.Estudiantes = new SelectList(_context.Estudiantes, "Matricula", "NombreCompleto");
             ViewBag.Materias = new SelectList(_context.Materias, "Codigo", "Nombre");
-            return View();
+            return View("Registrar");
+
         }
 
         [HttpPost]
@@ -45,13 +47,14 @@ namespace Actividad4LengProg3.Controllers
             {
                 ViewBag.Estudiantes = new SelectList(_context.Estudiantes, "Matricula", "NombreCompleto", calificacion.MatriculaEstudiante);
                 ViewBag.Materias = new SelectList(_context.Materias, "Codigo", "Nombre", calificacion.CodigoMateria);
-                return View(calificacion);
+                return View("Registrar", calificacion);
+
             }
 
             _context.Calificaciones.Add(calificacion);
             await _context.SaveChangesAsync();
             TempData["Mensaje"] = "Calificación registrada correctamente.";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Lista));
         }
 
         [HttpGet]   
