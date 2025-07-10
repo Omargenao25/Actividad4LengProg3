@@ -4,29 +4,36 @@
 }
 
 <h3>@ViewBag.Title</h3>
-<<form asp-action="Registrar" method="post">
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<form asp-action="Registrar" method="post">
+    @Html.AntiForgeryToken()
 
     <div class="mb-3">
-        <label class="form-label">Estudiante</label>
+        <label asp-for="MatriculaEstudiante" class="form-label"></label>
         <select asp-for="MatriculaEstudiante" asp-items="ViewBag.Estudiantes" class="form-select"></select>
         <span asp-validation-for="MatriculaEstudiante" class="text-danger"></span>
     </div>
+
     <div class="mb-3">
-        <label class="form-label">Materia</label>
+        <label asp-for="CodigoMateria" class="form-label"></label>
         <select asp-for="CodigoMateria" asp-items="ViewBag.Materias" class="form-select"></select>
         <span asp-validation-for="CodigoMateria" class="text-danger"></span>
     </div>
+
     <div class="mb-3">
-        <label class="form-label">Nota</label>
+        <label asp-for="Nota" class="form-label"></label>
         <input asp-for="Nota" type="number" class="form-control" />
         <span asp-validation-for="Nota" class="text-danger"></span>
     </div>
+
     <div class="mb-3">
-        <label class="form-label">Periodo</label>
+        <label asp-for="Periodo" class="form-label"></label>
         <input asp-for="Periodo" class="form-control" />
         <span asp-validation-for="Periodo" class="text-danger"></span>
     </div>
+
     <button type="submit" class="btn btn-success">Guardar</button>
     <a asp-action="Lista" class="btn btn-secondary ms-2">Cancelar</a>
 </form>
-

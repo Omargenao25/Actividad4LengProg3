@@ -60,7 +60,6 @@ namespace Actividad4LengProg3.Controllers
         }
 
         [HttpGet]
-        [HttpGet]
         public async Task<IActionResult> Editar(string matricula)
         {
             if (string.IsNullOrEmpty(matricula))

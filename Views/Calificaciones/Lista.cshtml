@@ -10,19 +10,18 @@
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
-            <th>Estudiante</th>
-            <th>Materia</th>
+            <th>Matricula Estudiante </th>
+            <th>Codigo Materia</th>
             <th>Nota</th>
             <th>Periodo</th>
-            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Estudiante?.NombreCompleto</td>
-                <td>@item.Materia?.Nombre</td>
+                <td>@item.MatriculaEstudiante</td>
+                <td>@item.CodigoMateria</td>
                 <td>@item.Nota</td>
                 <td>@item.Periodo</td>
                 <td>

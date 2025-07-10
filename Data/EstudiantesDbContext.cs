@@ -6,7 +6,7 @@ namespace Actividad4LengProg3.Data
 {
     public class EstudiantesDbContext: DbContext
     {
-        public EstudiantesDbContext (DbContextOptions<EstudiantesDbContext> options) : base(options) { }
+        public EstudiantesDbContext (DbContextOptions  options) : base(options) { }
 
         public DbSet<EstudianteViewModel> Estudiantes { get; set; }
         public DbSet<MateriaViewModel> Materias { get; set; }

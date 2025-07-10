@@ -10,20 +10,20 @@ namespace Actividad4LengProg3.Models
         public int Id { get; set; }
 
         [Required]
-        public required string MatriculaEstudiante { get; set; }
+        public string MatriculaEstudiante { get; set; }
 
         [Required]
-        public required string CodigoMateria { get; set; }
+        public  string CodigoMateria { get; set; }
 
         [Required, Range(0, 100)]
         public int Nota { get; set; }
 
         [Required]
-        public required string Periodo { get; set; }
+        public  string Periodo { get; set; }
 
         // Relaciones
         [ForeignKey("MatriculaEstudiante")]
-        public required EstudianteViewModel Estudiante { get; set; }
+       public required EstudianteViewModel Estudiante { get; set; }
 
         [ForeignKey("CodigoMateria")]
         public required MateriaViewModel Materia { get; set; }
