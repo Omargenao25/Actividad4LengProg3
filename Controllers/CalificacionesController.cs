@@ -15,12 +15,28 @@ namespace Actividad4LengProg3.Controllers
             _context = context;
         }
 
+        public IActionResult Index()
+        {
+          ViewBag.Estudiantes = _context.Estudiantes
+            .Select(u => new SelectListItem
+            {
+                Value = u.Matricula,
+                Text = u.Matricula + " - " + u.NombreCompleto + " - " + u.Carrera
+            }).ToList();
+
+            ViewBag.Materias = _context.Materias.Select(x=> new SelectListItem
+            {
+                Value = x.Codigo,
+                Text = x.Codigo + " - " + x.Nombre
+            }).ToList();
+
+            return View(new CalificacionViewModel());
+        }
+
         public IActionResult Lista()
         {
-            var calificaciones = _context.Calificaciones
-                .Include(c => c.Estudiantes)
-                .Include(c => c.Materia);
-            return View( calificaciones.ToList());
+            var calificaciones = _context.Calificaciones.ToList();
+            return View (calificaciones);
         }
 
         [HttpPost]
@@ -28,22 +44,20 @@ namespace Actividad4LengProg3.Controllers
         {
             if (ModelState.IsValid)
             {
-                var calificaciones = new CalificacionViewModel() 
+                var calificaciones = new CalificacionViewModel()
                 {
-                    Materia = calificacion.Materia,
+                    MatriculaEstudiante = calificacion.MatriculaEstudiante,
                     CodigoMateria = calificacion.CodigoMateria,
                     Nota = calificacion.Nota,
-                    Periodo = calificacion.Periodo,
-                    Estudiante = calificacion.Estudiante   
+                    Periodo = calificacion.Periodo
 
                 };
-                _context.Calificaciones .Add (calificaciones);
+                _context.Calificaciones.Add(calificaciones);
+                _context.SaveChanges();
+                TempData["Mensaje"] = "Calificación registrada correctamente.";
+                return RedirectToAction(nameof(Lista));
             }
-
-            _context.Calificaciones.Add(calificacion);
-            _context.SaveChanges();
-            TempData["Mensaje"] = "Calificación registrada correctamente.";
-            return RedirectToAction(nameof(Lista));
+            return View(calificacion);
         }
 
         [HttpGet]

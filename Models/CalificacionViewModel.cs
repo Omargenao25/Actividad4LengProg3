@@ -1,6 +1,7 @@
 ﻿using Actividad4LengProg3.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Actividad4LengProg3.Models
 {
@@ -10,10 +11,12 @@ namespace Actividad4LengProg3.Models
         public int Id { get; set; }
 
         [Required]
-        public string MatriculaEstudiante { get; set; }
+        [ForeignKey(nameof(MatriculaEstudiante))]
+        public string? MatriculaEstudiante { get; set; }
 
         [Required]
-        public  string CodigoMateria { get; set; }
+        [ForeignKey(nameof(CodigoMateria))]
+        public string? CodigoMateria { get; set; }
 
         [Required, Range(0, 100)]
         public int Nota { get; set; }
@@ -21,11 +24,7 @@ namespace Actividad4LengProg3.Models
         [Required]
         public  string Periodo { get; set; }
 
-        // Relaciones
-        [ForeignKey("MatriculaEstudiante")]
-       public required EstudianteViewModel Estudiante { get; set; }
 
-        [ForeignKey("CodigoMateria")]
-        public required MateriaViewModel Materia { get; set; }
     }
 }
+
