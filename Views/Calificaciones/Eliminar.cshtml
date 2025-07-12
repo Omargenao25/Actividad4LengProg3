@@ -3,18 +3,25 @@
     ViewBag.Title = "Eliminar Calificación";
 }
 
-<h3>¿Eliminar esta calificación?</h3>
+<h3 class="mb-3">¿Deseas eliminar esta calificación?</h3>
 
 <dl class="row">
-    <dt class="col-sm-2">Estudiante</dt>
-    <dd class="col-sm-10">@Model.MatriculaEstudiante?</dd>
+    <dt class="col-sm-3">Estudiante</dt>
+    <dd class="col-sm-9">@Model.MatriculaEstudiante</dd>
 
-    <dt class="col-sm-2">Materia</dt>
-    <dd class="col-sm-10">@Model.CodigoMateria</dd>
+    <dt class="col-sm-3">Materia</dt>
+    <dd class="col-sm-9">@Model.CodigoMateria</dd>
+
+    <dt class="col-sm-3">Nota</dt>
+    <dd class="col-sm-9">@Model.Nota</dd>
+
+    <dt class="col-sm-3">Periodo</dt>
+    <dd class="col-sm-9">@Model.Periodo</dd>
 </dl>
 
-<form asp-action="Delete">
+<form asp-action="EliminarConfirmado" method="post">
+    @Html.AntiForgeryToken()
     <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <button type="submit" class="btn btn-danger">Confirmar eliminación</button>
     <a asp-action="Lista" class="btn btn-secondary ms-2">Cancelar</a>
 </form>

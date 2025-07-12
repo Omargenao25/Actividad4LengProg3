@@ -3,30 +3,31 @@
     ViewBag.Title = "Editar Calificación";
 }
 
-<h3>@ViewBag.Title</h3>
+<h3 class="mb-4">@ViewBag.Title</h3>
 
 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
 <form asp-action="Editar" method="post">
     @Html.AntiForgeryToken()
-
     <input type="hidden" asp-for="Id" />
 
     <div class="mb-3">
-        <label class="form-label">Estudiante</label>
-        <select asp-for="MatriculaEstudiante" asp-items="ViewBag.Estudiantes" class="form-select"></select>
+        <label class="form-label">Matricula Estudiante</label>
+        <select asp-for="MatriculaEstudiante" asp-items="ViewBag.Estudiantes" class="form-select" disabled></select>
+        <input type="hidden" asp-for="MatriculaEstudiante" />
         <span asp-validation-for="MatriculaEstudiante" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Materia</label>
-        <select asp-for="CodigoMateria" asp-items="ViewBag.Materias" class="form-select"></select>
+        <label class="form-label">Codigo Materia</label>
+        <select asp-for="CodigoMateria" asp-items="ViewBag.Materias" class="form-select" disabled></select>
+        <input type="hidden" asp-for="CodigoMateria" />
         <span asp-validation-for="CodigoMateria" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Nota</label>
-        <input asp-for="Nota" type="number" class="form-control" />
+        <input asp-for="Nota" type="number" class="form-control" min="0" max="100" />
         <span asp-validation-for="Nota" class="text-danger"></span>
     </div>
 

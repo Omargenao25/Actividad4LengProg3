@@ -89,15 +89,26 @@ namespace Actividad4LengProg3.Controllers
             return RedirectToAction(nameof(Lista));
         }
 
-        public  IActionResult Eliminar(int id)
+        public IActionResult Eliminar(int id)
         {
-            var calificacion =  _context.Calificaciones.Find(id);
+            var calificacion = _context.Calificaciones.Find(id);
+            if (calificacion == null) return NotFound();
+            return View(calificacion);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EliminarConfirmado(int id)
+        {
+            var calificacion = _context.Calificaciones.Find(id);
             if (calificacion == null) return NotFound();
 
             _context.Calificaciones.Remove(calificacion);
             _context.SaveChanges();
-            TempData["Mensaje"] = "Calificación eliminada.";
+            TempData["Mensaje"] = "Calificación eliminada correctamente.";
             return RedirectToAction(nameof(Lista));
         }
+
+
     }
 }
